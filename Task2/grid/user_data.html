@@ -1,0 +1,80 @@
+<html>
+
+<head>
+    <title>Retreiving data</title>
+    <script src="../assets/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+    <form action="" id="dis_form">
+        <div align="right"><input type="button" id="add" value="ADD"></div>
+        <div align="right"><input type="button" id="add" class="cancel" value="CANCEL"></div>
+        <div id="d1"></div>
+    </form>
+    <script>
+        var myObj = new Object();
+        $(document).ready(function () {
+
+            $.ajax({
+                type: 'GET',
+                url: "http://172.104.190.30:7777/api/v1/users",
+                dataType: "JSON",
+                success: function (response) {
+                    console.log(response);
+
+                    let data_val = response.data;
+                    let name = data_val.map(x => x.name);
+                    let email = data_val.map(x => x.email);
+                    let phone = data_val.map(x => x.phone);
+                    let address = data_val.map(x => x.address);
+                    let gender = data_val.map(x => x.gender);
+                    let id = data_val.map(x => x._id);
+                    // console.log(name);
+                    var slno = 0;
+                    var content = "<table border='1px' align='center'>";
+                    content += '<tr><th>SL NO</th><th>NAME</th><th>EMAIL</th><th>PHNO</th><th>ADDRESS</th><th>GENDER</th><th>EDIT</th><th>DELETE</th></tr>';
+                    for (var i = 0; i < name.length; i++) {
+                        var url = "hello.html";
+                        content += '<tr><td>' + ++slno + '</td><td>' + name[i] + '</td><td>' + email[i] + '</td><td>' + phone[i] + '</td><td>' + address[i] + '</td><td>' + gender[i] + '</td><td><a href=../forms/add_edit.html?id=' + id[i] + '><img class=img_ src=../images/edit_img.png></a></td>';
+                        content += '<td><img src="../images/del_img.jpg" class="del img_" id=' + id[i] + '></td></tr>';
+                    }
+                    content += "</table>";
+                    $("#d1").append(content);
+
+                    $(".del").click(function () {
+                        var id_ = this.id;
+                        var url_ = "http://172.104.190.30:7777/api/v1/users/" + id_;
+                        $.ajax({
+                            type: 'DELETE',
+                            url: url_,
+                            dataType: "JSON",
+                            success: function (response) {
+                                alert("Data removed successfully");
+                                window.location.href = "../grid/user_data.html";
+
+                            },
+                            error: function () {
+                                console.log('Error: ');
+
+                            }
+                        });
+                    })
+                },
+                error: function () {
+                    console.log('Error: ' + data_to);
+                }
+            });
+        })
+        $(document).ready(function () {
+            $("#add").click(function () {
+                window.location.href = "../forms/add_edit.html";
+            })
+            $(".cancel").click(function () {
+                window.location.href = "../index.html";
+            })
+        })
+    </script>
+</body>
+
+</html>
